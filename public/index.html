@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>お問い合わせ</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="contact-form-container">
+      <h1>お問い合わせ</h1>
+      <form id="contactForm">
+        <label for="name">お名前:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="email">メールアドレス:</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="message">メッセージ:</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+
+        <button type="submit">送信</button>
+      </form>
+      <p id="responseMessage"></p>
+    </div>
+
+    <script>
+      const form = document.getElementById("contactForm");
+      const responseMessage = document.getElementById("responseMessage");
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const data = {
+          name: formData.get("name"),
+          email: formData.get("email"),
+          message: formData.get("message"),
+        };
+
+        try {
+          const response = await fetch("http://127.0.0.1:3000/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (response.ok) {
+            responseMessage.textContent = "お問い合わせありがとうございます！";
+            form.reset();
+          } else {
+            responseMessage.textContent = "メール送信に失敗しました。";
+          }
+        } catch (error) {
+          responseMessage.textContent = "エラーが発生しました。";
+        }
+      });
+    </script>
+  </body>
+</html>
